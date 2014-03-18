@@ -1,0 +1,16 @@
+#:kivy 1.8.0
+#:import Window kivy.core.window.Window
+
+<MainUI>
+    canvas:
+        Color:
+            rgb: 1,1,1
+        Rectangle:
+            source: 'data/images/lina_inverse_landscape.jpg' if Window.height < Window.width else 'data/images/lina_inverse_portrait.jpg'
+            size: self.size
+    BoxLayout:
+        padding: 30
+        orientation: 'vertical'
+        Label:
+            id: bottom_label
+            text: 'The text here'
