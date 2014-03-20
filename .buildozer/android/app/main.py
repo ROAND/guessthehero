@@ -4,7 +4,8 @@ from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.button import Button
 from kivy.core.audio import SoundLoader
-from kivy.core.window import Window
+#if platform == 'android':
+#    from jnius import autoclass
 import random
 #from kivy.core.window import WindowBase, Window
 
@@ -22,12 +23,22 @@ class MainUI(FloatLayout):
         super(MainUI, self).__init__(**kwargs)
         all_heroes = [hero_names_rads, hero_names_rada, hero_names_radi, hero_names_dirs, hero_names_dira, hero_names_diri]
         self.colocar_botoes(random.choice(all_heroes))
-        self.sound = SoundLoader.load('data/sounds/match_ready_no_focus.wav')
-        #Window.size=340,480
+        if platform == 'android':
+            self.sound = SoundLoader.load('data/sounds/match_ready_no_focus.wav')
+            #MediaPlayer = autoclass('android.media.MediaPlayer')
+            #self.asound = MediaPlayer()
+            #self.asound.setDataSource('data/sounds/match_ready_no_focus.wav')
+            #self.asound.prepare()
+        else:
+            self.sound = SoundLoader.load('data/sounds/match_ready_no_focus.wav')
 
     def button_click(self, name):
-        if self.sound:
+        if platform == 'android':
+            #self.asound.play() 
             self.sound.play()
+        else:
+            if self.sound:
+                self.sound.play()
 
     def colocar_botoes(self, hero_names):
         selected = random.sample(hero_names, 4)
