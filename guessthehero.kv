@@ -1,26 +1,37 @@
-#:kivy 1.8.0
+#kivy 1.8.0
 #:import Window kivy.core.window.Window
 #:import platform kivy
 
 <MainUI>
-    canvas:
-        Color:
-            rgb: 1,1,1
-        Rectangle:
-            source: 'data/images/lina_inverse_landscape.jpg' if Window.height < Window.width or Window.rotation > 0 else 'data/images/lina_inverse_portrait.jpg'
-            size: self.size
+    #canvas:
+    #    Color:
+    #        rgb: 1,1,1
+    #    Rectangle:
+    #        #source: 'data/images/lina_inverse_landscape.jpg' if Window.height < Window.width or Window.rotation > 0 else 'data/images/lina_inverse_portrait.jpg'
+    #        size: self.size
     BoxLayout:
         padding: 30
         orientation: 'vertical' if Window.height > Window.width or platform is 'android' and  Window.rotation == 0 else 'horizontal'
         BoxLayout:
-            orientation: 'horizontal'
+            orientation: 'vertical'
             Image:
-                id: bottom_label
+                id: question_image
                 source: 'data/images/question_mark.png'
-            Label:
-                text: 'Score: 00'
+            BoxLayout:
+                orientation: 'horizontal'
+                Label:
+                    text: 'Score:'
+                Label:
+                    id: label_score
+                    text: '00'
+                    font_size: 40
+                Label:
+                    text: 'Time:'
+                Label:
+                    id: label_time
+                    text: '00'
+                    font_size: 40
         BoxLayout:
             id: options_layout
             spacing: 20
             orientation: 'vertical'
-            text: 'Earth Spirit'
