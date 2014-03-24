@@ -3,12 +3,12 @@
 #:import platform kivy
 
 <MainUI>
-    #canvas:
-    #    Color:
-    #        rgb: 1,1,1
-    #    Rectangle:
-    #        #source: 'data/images/lina_inverse_landscape.jpg' if Window.height < Window.width or Window.rotation > 0 else 'data/images/lina_inverse_portrait.jpg'
-    #        size: self.size
+    canvas:
+        Color:
+            rgb: 1,1,1
+        Rectangle:
+            source: 'data/images/lina_inverse_landscape.jpg' if Window.height < Window.width or Window.rotation > 0 else 'data/images/lina_inverse_portrait.jpg'
+            size: self.size
     BoxLayout:
         padding: 30
         orientation: 'vertical' if Window.height > Window.width or platform is 'android' and  Window.rotation == 0 else 'horizontal'
@@ -17,6 +17,9 @@
             Image:
                 id: question_image
                 source: 'data/images/question_mark.png'
+            Label:
+                id: winlose_label
+                font_size: 50
             BoxLayout:
                 orientation: 'horizontal'
                 Label:
@@ -35,3 +38,12 @@
             id: options_layout
             spacing: 20
             orientation: 'vertical'
+
+<MenuUI>
+    BoxLayout:
+        Button:
+            id: sg_button
+            text: 'Start Game'
+            background_normal: 'data/images/button_off.png'
+            background_down: 'data/images/button_on.png'
+            on_press: root.start_game()
