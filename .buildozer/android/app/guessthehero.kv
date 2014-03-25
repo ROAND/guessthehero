@@ -1,4 +1,4 @@
-#:kivy 1.8.0
+#kivy 1.8.0
 #:import Window kivy.core.window.Window
 #:import platform kivy
 
@@ -13,14 +13,37 @@
         padding: 30
         orientation: 'vertical' if Window.height > Window.width or platform is 'android' and  Window.rotation == 0 else 'horizontal'
         BoxLayout:
-            orientation: 'horizontal'
+            orientation: 'vertical'
             Image:
-                id: bottom_label
+                id: question_image
                 source: 'data/images/question_mark.png'
             Label:
-                text: 'Score: 00'
+                id: winlose_label
+                font_size: 50
+            BoxLayout:
+                orientation: 'horizontal'
+                Label:
+                    text: 'Score:'
+                Label:
+                    id: label_score
+                    text: '00'
+                    font_size: 40
+                Label:
+                    text: 'Time:'
+                Label:
+                    id: label_time
+                    text: '00'
+                    font_size: 40
         BoxLayout:
             id: options_layout
             spacing: 20
             orientation: 'vertical'
-            text: 'Earth Spirit'
+
+<MenuUI>
+    BoxLayout:
+        Button:
+            id: sg_button
+            text: 'Start Game'
+            background_normal: 'data/images/button_off.png'
+            background_down: 'data/images/button_on.png'
+            on_press: root.start_game()
