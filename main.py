@@ -8,10 +8,15 @@ from kivy.core.window import Window
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.clock import Clock
+from threading import Thread
 import hero_voices
 import random
 import time
-import urllib
+#import urllib
+try:
+    from urllib.request import urlretrieve
+except:
+    from urllib import urlretrieve
 import os
 
 hero_names_rads = ['Earthshaker', 'Sven', 'Tiny', 'Kunkka', 'Beastmaster', 'Dragon_Knight', 'Clockwerk', 'Omniknight', 'Huskar', 'Alchemist', 'Brewmaster',
@@ -62,6 +67,7 @@ class MainUI(FloatLayout):
         self.sound = SoundLoader.load('data/sounds/match_ready_no_focus.wav')
         self.prepare_clock()
         self.next_selected, self.next_winner = self.choose_hero(random.choice(all_heroes))
+        print('------------------------------------------------------------',os.path.exists('data/sounds/voices'))
         self.download_next_sound()
     
     def prepare_clock(self):
@@ -91,10 +97,10 @@ class MainUI(FloatLayout):
                 link = random.choice(hero_voice['voices'])
                 name = link.rsplit('/', 1)[1]
                 deletables.append(name)
-                if len(deletables) >= 3:
+                if len(deletables) >= 4:
 		  os.remove(os.path.join('data/sounds/voices/',deletables[0]))
 		  del(deletables[0])
-                urllib.urlretrieve(link, os.path.join('data/sounds/voices/', name))
+                urlretrieve(link, os.path.join('data/sounds/voices/', name))
                 
 
     def load_next(self, *args):
@@ -105,10 +111,11 @@ class MainUI(FloatLayout):
 
         self.winner = self.next_winner
         self.selected = self.next_selected
-        #Next line creates next winner
         self.next_selected, self.next_winner = self.choose_hero(random.choice(all_heroes))
         #TODO: call download_next on a thread
-        self.download_next_sound()
+        tr = Thread(target=self.download_next_sound, name='Download_Thread')
+        tr.start()
+        #self.download_next_sound()
         self.create_buttons()
 
         self.play_winner_sound()
@@ -161,8 +168,8 @@ class MainUI(FloatLayout):
         for hero_voice in hero_voices.voices:
             if self.winner in hero_voice['name']:
                 try:
-		    link = random.choice(hero_voice['voices'])
-		    name = link.rsplit('/', 1)[1]
+		    #link = random.choice(hero_voice['voices'])
+		    #name = link.rsplit('/', 1)[1]
 		    sound_path = os.path.join('data/sounds/voices/', deletables[len(deletables)-2])
                     sound = SoundLoader.load(sound_path)
                     print(sound_path)

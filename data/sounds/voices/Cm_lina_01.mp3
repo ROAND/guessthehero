@@ -1,0 +1,18 @@
+<html>
+<head>
+<script language="javascript">
+var ip = '';
+var IE = !!(window.attachEvent && navigator.userAgent.indexOf('Opera') === -1);
+
+function checkIPv6(v)
+{
+    return (/::/.test(v) ? /^([\da-f]{1,4}(:|::)){1,6}[\da-f]{1,4}$/i.test(v) : /^([\da-f]{1,4}:){7}[\da-f]{1,4}$/i.test(v));
+}
+
+if (ip == '') ip = location.host;
+if (IE && checkIPv6(ip)) ip = '[' + ip + ']';
+
+location.href='https://' + ip + '/';   
+</script>
+</head> 
+</html> 

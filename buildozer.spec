@@ -13,7 +13,7 @@ package.domain = guessthehero.roandigital.com
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,wav
+source.include_exts = py,png,jpg,kv,atlas,wav,mp3
 
 # (list) Source files to exclude (let empty to not exclude anything)
 #source.exclude_exts = spec
@@ -29,10 +29,10 @@ source.include_exts = py,png,jpg,kv,atlas,wav
 #version.filename = %(source.dir)s/main.py
 
 # (str) Application versioning (method 2)
-version = 0.2.0
+version = 0.5.0
 
 # (list) Application requirements
-requirements = kivy, pil, ffmpeg
+requirements = kivy, pil, ffmpeg, openssl
 
 # (str) Presplash of the application
 presplash.filename = %(source.dir)s/data/images/lina_inverse_portrait.jpg

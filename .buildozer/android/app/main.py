@@ -8,9 +8,16 @@ from kivy.core.window import Window
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.clock import Clock
+from threading import Thread
 import hero_voices
 import random
 import time
+#import urllib
+try:
+    from urllib.request import urlretrieve
+except:
+    from urllib import urlretrieve
+import os
 
 hero_names_rads = ['Earthshaker', 'Sven', 'Tiny', 'Kunkka', 'Beastmaster', 'Dragon_Knight', 'Clockwerk', 'Omniknight', 'Huskar', 'Alchemist', 'Brewmaster',
                    'Treant_Protector', 'Io', 'Centaur_Warrunner', 'Timbersaw', 'Bristleback', 'Tusk', 'Elder_Titan', 'Legion_Commander', 'Earth_Spirit', 'Phoenix']
@@ -28,6 +35,7 @@ hero_names_diri = ['Bane', 'Lich', 'Lion', 'Witch_Doctor', 'Enigma', 'Necrophos'
 # All heroes separated by category
 all_heroes = [hero_names_rads, hero_names_rada, hero_names_radi,
               hero_names_dirs, hero_names_dira, hero_names_diri]
+deletables = []
 base_points = 10
 base_lose_points = 10
 
@@ -40,12 +48,12 @@ class MenuUI(FloatLayout):
     def start_game(self):
         self.ids.sg_button.opacity = 0
         self.ids.sg_button.disabled = True
+
         main = MainUI()
         self.add_widget(main)
 
 kill_phrases = ['Ownage!', 'Double Tap!',
                 'Killing Spree!', 'Ultra Kill', 'Rampage!']
-
 
 class MainUI(FloatLayout):
 
@@ -57,10 +65,10 @@ class MainUI(FloatLayout):
         self.time = 0
         self.wins = 0
         self.sound = SoundLoader.load('data/sounds/match_ready_no_focus.wav')
-        #self.load_next()
         self.prepare_clock()
-        #self.start()
-        #self.stop_time(0)
+        self.next_selected, self.next_winner = self.choose_hero(random.choice(all_heroes))
+        print('------------------------------------------------------------',os.path.exists('data/sounds/voices'))
+        self.download_next_sound()
     
     def prepare_clock(self):
         self.time = 3
@@ -83,16 +91,37 @@ class MainUI(FloatLayout):
         Clock.unschedule(self.update_time)
         Clock.unschedule(self.load_next)
 
+    def download_next_sound(self):
+        for hero_voice in hero_voices.voices:
+            if self.next_winner in hero_voice['name']:
+                link = random.choice(hero_voice['voices'])
+                name = link.rsplit('/', 1)[1]
+                deletables.append(name)
+                if len(deletables) >= 4:
+		  os.remove(os.path.join('data/sounds/voices/',deletables[0]))
+		  del(deletables[0])
+                urlretrieve(link, os.path.join('data/sounds/voices/', name))
+                
+
     def load_next(self, *args):
         if self.previous_buttons:
             for button in self.previous_buttons:
                 self.ids.options_layout.remove_widget(button)
                 del button
-        self.choose_from_category(random.choice(all_heroes))
+
+        self.winner = self.next_winner
+        self.selected = self.next_selected
+        self.next_selected, self.next_winner = self.choose_hero(random.choice(all_heroes))
+        #TODO: call download_next on a thread
+        tr = Thread(target=self.download_next_sound, name='Download_Thread')
+        tr.start()
+        #self.download_next_sound()
+        self.create_buttons()
+
         self.play_winner_sound()
-        # Update time (should vary with dificulty)
         self.time = self.seconds
         self.ids.question_image.source = 'data/images/question_mark.png'
+        print(self.next_winner)
 
     def show_popup(self, title, text):
         popup = Popup(
@@ -138,21 +167,37 @@ class MainUI(FloatLayout):
     def play_winner_sound(self):
         for hero_voice in hero_voices.voices:
             if self.winner in hero_voice['name']:
-                sound = SoundLoader.load(random.choice(hero_voice['voices']))
+                try:
+		    #link = random.choice(hero_voice['voices'])
+		    #name = link.rsplit('/', 1)[1]
+		    sound_path = os.path.join('data/sounds/voices/', deletables[len(deletables)-2])
+                    sound = SoundLoader.load(sound_path)
+                    print(sound_path)
+                except Exception as e:
+		    print(e.message)
+                    link = random.choice(hero_voice['voices'])
+                    sound = SoundLoader.load(link)
+
                 if sound:
                     sound.play()
 
-    def choose_from_category(self, hero_names):
-        selected = random.sample(hero_names, 4)
-        self.winner = random.choice(selected)
+    def create_buttons(self):
+        #---------- Change buttons ----------------
         self.previous_buttons = []
-        for name in selected:
+        for name in self.selected:
             bt = Button(text=name.replace(
                 '_', ' '), background_normal='data/images/button_off.png', background_down='data/images/button_on.png')
             bt.bind(on_press=lambda x, hero=name: self.button_click(hero))
             self.previous_buttons.append(bt)
             self.ids['options_layout'].add_widget(bt)
+        #------------------------------------------
 
+    def choose_hero(self, hero_names):
+        #Select winner ------------
+        selected = random.sample(hero_names, 4)
+        winner = random.choice(selected)
+        return selected, winner
+        
 
 class GuessTheHeroApp(App):
 
