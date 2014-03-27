@@ -12,12 +12,13 @@ from threading import Thread
 import hero_voices
 import random
 import time
-#import urllib
+import os
+import logging
+logging.basicConfig(filename='data/errors.log', level=logging.DEBUG)
 try:
     from urllib.request import urlretrieve
 except:
     from urllib import urlretrieve
-import os
 
 hero_names_rads = ['Earthshaker', 'Sven', 'Tiny', 'Kunkka', 'Beastmaster', 'Dragon_Knight', 'Clockwerk', 'Omniknight', 'Huskar', 'Alchemist', 'Brewmaster',
                    'Treant_Protector', 'Io', 'Centaur_Warrunner', 'Timbersaw', 'Bristleback', 'Tusk', 'Elder_Titan', 'Legion_Commander', 'Earth_Spirit', 'Phoenix']
@@ -37,7 +38,7 @@ all_heroes = [hero_names_rads, hero_names_rada, hero_names_radi,
               hero_names_dirs, hero_names_dira, hero_names_diri]
 deletables = []
 base_points = 10
-base_lose_points = 10
+base_lose_points = 50
 
 
 class MenuUI(FloatLayout):
@@ -49,11 +50,12 @@ class MenuUI(FloatLayout):
         self.ids.sg_button.opacity = 0
         self.ids.sg_button.disabled = True
 
-        main = MainUI()
-        self.add_widget(main)
+        self.main = MainUI()
+        self.add_widget(self.main)
 
 kill_phrases = ['Ownage!', 'Double Tap!',
                 'Killing Spree!', 'Ultra Kill', 'Rampage!']
+
 
 class MainUI(FloatLayout):
 
@@ -66,26 +68,27 @@ class MainUI(FloatLayout):
         self.wins = 0
         self.sound = SoundLoader.load('data/sounds/match_ready_no_focus.wav')
         self.prepare_clock()
-        self.next_selected, self.next_winner = self.choose_hero(random.choice(all_heroes))
-        print('------------------------------------------------------------',os.path.exists('data/sounds/voices'))
+        self.next_selected, self.next_winner = self.choose_hero(
+            random.choice(all_heroes))
         self.download_next_sound()
-    
+
     def prepare_clock(self):
         self.time = 3
         Clock.schedule_once(self.start, 3)
         Clock.schedule_interval(self.update_time, 0.1)
-        #self.load_next()
+        self.ids.winlose_label.text = 'Preparing...'
 
     def start(self, *args):
+        self.load_next(True)
         Clock.schedule_interval(self.load_next, self.seconds)
         Clock.unschedule(self.update_time)
         Clock.schedule_interval(self.update_time, 0.1)
-        self.load_next()
 
     def update_time(self, *args):
         self.time = self.time - 0.1
         if self.time >= 0:
             self.ids.label_time.text = str(self.time)
+            self.ids.pbar.value = self.time
 
     def stop_time(self, *args):
         Clock.unschedule(self.update_time)
@@ -98,12 +101,24 @@ class MainUI(FloatLayout):
                 name = link.rsplit('/', 1)[1]
                 deletables.append(name)
                 if len(deletables) >= 4:
-		  os.remove(os.path.join('data/sounds/voices/',deletables[0]))
-		  del(deletables[0])
-                urlretrieve(link, os.path.join('data/sounds/voices/', name))
-                
+                    os.remove(
+                        os.path.join('data/sounds/voices/', deletables[0]))
+                    del(deletables[0])
+                try:
+                    urlretrieve(link, os.path.join('data/sounds/voices/', name))
+                except Exception as e:
+                    #self.show_popup('Error','Error downloading file, check your internet connection!')
+                    logging.error('Error downloading file, most likely without internet connection')
 
     def load_next(self, *args):
+        for arg in args:
+            if arg == True:
+                pass
+            else:
+                # Downgrades score when not clicking anything
+                self.downgrade_score()
+
+        self.ids.winlose_label.text = ''
         if self.previous_buttons:
             for button in self.previous_buttons:
                 self.ids.options_layout.remove_widget(button)
@@ -111,17 +126,16 @@ class MainUI(FloatLayout):
 
         self.winner = self.next_winner
         self.selected = self.next_selected
-        self.next_selected, self.next_winner = self.choose_hero(random.choice(all_heroes))
-        #TODO: call download_next on a thread
+        self.next_selected, self.next_winner = self.choose_hero(
+            random.choice(all_heroes))
         tr = Thread(target=self.download_next_sound, name='Download_Thread')
         tr.start()
-        #self.download_next_sound()
         self.create_buttons()
 
         self.play_winner_sound()
         self.time = self.seconds
         self.ids.question_image.source = 'data/images/question_mark.png'
-        print(self.next_winner)
+        # print(self.next_winner)
 
     def show_popup(self, title, text):
         popup = Popup(
@@ -139,47 +153,58 @@ class MainUI(FloatLayout):
             # remaining time by standard points)
             self.ids.question_image.source = 'data/images/%s.png' % self.winner
             if self.time > 0:
-                self.score = self.score + (base_points * self.time)
+                self.upgrade_score()
             else:
                 self.score = self.score + base_points
             self.update_score()
             #self.show_popup('Yay!', 'You win!')
-            self.ids.winlose_label.text = 'Great!'
             for bt in self.previous_buttons:
                 bt.disabled = True
             if self.sound:
                 self.sound.play()
             self.stop_time()
             self.prepare_clock()
-            #self.load_next()
-            #self.start()
         # Wrong:
         else:
-            #self.show_popup('No!', 'WRONG!')
             # TODO: set error sound and implement a nicer error punishment
             # engine (something like the time goes down a couple of seconds
             # every time the wrong hero is selected
             self.ids.winlose_label.text = 'NO!'
+            self.downgrade_score()
             self.wins = 0
-            self.score = self.score - base_lose_points * (10 - self.time)
             self.update_score()
+
+    def upgrade_score(self):
+        self.score = self.score + (base_points * self.time)
+        self.update_score()
+
+    def downgrade_score(self):
+        self.score = self.score - (base_lose_points * (10 - self.time))
+        if self.score < 0:
+            self.score = 0
+        self.update_score()
 
     def play_winner_sound(self):
         for hero_voice in hero_voices.voices:
             if self.winner in hero_voice['name']:
                 try:
-		    #link = random.choice(hero_voice['voices'])
-		    #name = link.rsplit('/', 1)[1]
-		    sound_path = os.path.join('data/sounds/voices/', deletables[len(deletables)-2])
+                    #link = random.choice(hero_voice['voices'])
+                    #name = link.rsplit('/', 1)[1]
+                    sound_path = os.path.join(
+                        'data/sounds/voices/', deletables[len(deletables) - 2])
                     sound = SoundLoader.load(sound_path)
                     print(sound_path)
                 except Exception as e:
-		    print(e.message)
+                    self.show_popup('Error',e.message)
+                    logging.error(e.message)
                     link = random.choice(hero_voice['voices'])
                     sound = SoundLoader.load(link)
 
                 if sound:
-                    sound.play()
+                    try:
+                        sound.play()
+                    except Exception as e:
+                        logging.error(e.message)
 
     def create_buttons(self):
         #---------- Change buttons ----------------
@@ -193,17 +218,27 @@ class MainUI(FloatLayout):
         #------------------------------------------
 
     def choose_hero(self, hero_names):
-        #Select winner ------------
+        # Select winner ------------
         selected = random.sample(hero_names, 4)
         winner = random.choice(selected)
         return selected, winner
-        
+
 
 class GuessTheHeroApp(App):
 
     def build(self):
         self.icon = 'data/images/dota_icon.png'
-        return MenuUI()
+        self.menu = MenuUI()
+        return self.menu
+
+    def on_pause(self):
+        if self.menu.main:
+            self.menu.main.stop_time()
+        return True
+    
+    def on_resume(self):
+        if self.menu.main:
+            self.menu.main.start()
 
 if __name__ == '__main__':
     GuessTheHeroApp().run()

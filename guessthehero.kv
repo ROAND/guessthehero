@@ -8,19 +8,24 @@
             rgb: 1,1,1
         Rectangle:
             #source: 'data/images/lina_inverse_landscape.jpg' if Window.height < Window.width or Window.rotation > 0 else 'data/images/lina_inverse_portrait.jpg'
-            source: 'data/images/dota-2-logo.jpg'
+            source: 'data/images/dota-2-logo.jpg' if Window.height < Window.width or Window.rotation > 0 else 'data/images/dota-2-logo-portrait.jpeg'
             size: self.size
     BoxLayout:
         padding: 30
         orientation: 'vertical' if Window.height > Window.width or platform is 'android' and  Window.rotation == 0 else 'horizontal'
         BoxLayout:
             orientation: 'vertical'
+            spacing: 5
+            padding: 30
             Image:
                 id: question_image
                 source: 'data/images/question_mark.png'
             Label:
                 id: winlose_label
-                font_size: 50
+                font_size: 40
+            ProgressBar:
+                id: pbar
+                max: 10
             BoxLayout:
                 orientation: 'horizontal'
                 Label:
@@ -28,13 +33,13 @@
                 Label:
                     id: label_score
                     text: '00'
-                    font_size: 40
+                    font_size: 35
                 Label:
                     text: 'Time:'
                 Label:
                     id: label_time
                     text: '00'
-                    font_size: 40
+                    font_size: 35
         BoxLayout:
             id: options_layout
             spacing: 20
