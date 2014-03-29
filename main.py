@@ -50,8 +50,12 @@ class MenuUI(FloatLayout):
         self.ids.sg_button.opacity = 0
         self.ids.sg_button.disabled = True
 
-        self.main = MainUI()
+        self.main = MainUI(self)
         self.add_widget(self.main)
+
+    def remove_instance(self):
+        self.remove_widget(self.main)
+        del self.main
 
 kill_phrases = ['Ownage!', 'Double Tap!',
                 'Killing Spree!', 'Ultra Kill', 'Rampage!']
@@ -59,18 +63,20 @@ kill_phrases = ['Ownage!', 'Double Tap!',
 
 class MainUI(FloatLayout):
 
-    def __init__(self, **kwargs):
+    def __init__(self, menu, **kwargs):
         super(MainUI, self).__init__(**kwargs)
         self.previous_buttons = list()
         self.seconds = 10
         self.score = 0
         self.time = 0
         self.wins = 0
+        self.lives = 3
         self.sound = SoundLoader.load('data/sounds/match_ready_no_focus.wav')
         self.prepare_clock()
         self.next_selected, self.next_winner = self.choose_hero(
             random.choice(all_heroes))
         self.download_next_sound()
+        self.menu = menu
 
     def prepare_clock(self):
         self.time = 3
@@ -143,6 +149,11 @@ class MainUI(FloatLayout):
         popup.open()
 
     def update_score(self):
+        if self.lives < 0:
+            pass
+            #TODO: this gets called 2 times -----
+            #self.show_popup('Game Over','Oh no!')
+            #self.menu.remove_instance()
         self.ids.label_score.text = str(self.score)
 
     def button_click(self, name):
@@ -180,6 +191,7 @@ class MainUI(FloatLayout):
 
     def downgrade_score(self):
         self.score = self.score - (base_lose_points * (10 - self.time))
+        self.lives = self.lives-1
         if self.score < 0:
             self.score = 0
         self.update_score()
