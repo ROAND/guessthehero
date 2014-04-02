@@ -118,12 +118,12 @@ class MainUI(FloatLayout):
                 if name != deletables[0:]:
                     deletables.append(name)
                 print(deletables)
-                if len(deletables) >= 4:
-                    os.remove(
-                        os.path.join('data/sounds/voices/', deletables[0]))
-                    deletables[0] = None
-                    del(deletables[0])
                 try:
+                    if len(deletables) >= 4:
+                        os.remove(
+                            os.path.join('data/sounds/voices/', deletables[0]))
+                        deletables[0] = None
+                        del(deletables[0])
                     urlretrieve(
                         link, os.path.join('data/sounds/voices/', name))
                 except Exception as e:
