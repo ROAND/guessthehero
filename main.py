@@ -3,10 +3,11 @@ from kivy import platform
 from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.button import Button
-from kivy.core.audio import SoundLoader
-from kivy.core.window import Window
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
+from kivy.uix.image import Image
+from kivy.core.audio import SoundLoader
+from kivy.core.window import Window
 from kivy.clock import Clock
 from threading import Thread
 import hero_voices
@@ -38,7 +39,7 @@ all_heroes = [hero_names_rads, hero_names_rada, hero_names_radi,
               hero_names_dirs, hero_names_dira, hero_names_diri]
 deletables = []
 base_points = 10
-base_lose_points = 50
+base_lose_points = 40
 
 
 class MenuUI(FloatLayout):
@@ -55,7 +56,8 @@ class MenuUI(FloatLayout):
 
     def remove_instance(self):
         self.remove_widget(self.main)
-        del self.main
+        self.main = None
+        self.__init__()
 
 kill_phrases = ['Ownage!', 'Double Tap!',
                 'Killing Spree!', 'Ultra Kill', 'Rampage!']
@@ -77,6 +79,14 @@ class MainUI(FloatLayout):
             random.choice(all_heroes))
         self.download_next_sound()
         self.menu = menu
+        #self.ids.label_lives.text=str(self.lives+1)
+        self.show_lives()
+
+    def show_lives(self):
+        self.ids.box_lives.clear_widgets()
+        for i in range(self.lives):
+            life = Image(source='data/images/heart_of_tarrasque.png',size_hint=(0.8,0.8))
+            self.ids.box_lives.add_widget(life)
 
     def prepare_clock(self):
         self.time = 3
@@ -105,16 +115,21 @@ class MainUI(FloatLayout):
             if self.next_winner in hero_voice['name']:
                 link = random.choice(hero_voice['voices'])
                 name = link.rsplit('/', 1)[1]
-                deletables.append(name)
+                if name != deletables[0:]:
+                    deletables.append(name)
+                print(deletables)
                 if len(deletables) >= 4:
                     os.remove(
                         os.path.join('data/sounds/voices/', deletables[0]))
+                    deletables[0] = None
                     del(deletables[0])
                 try:
-                    urlretrieve(link, os.path.join('data/sounds/voices/', name))
+                    urlretrieve(
+                        link, os.path.join('data/sounds/voices/', name))
                 except Exception as e:
                     #self.show_popup('Error','Error downloading file, check your internet connection!')
-                    logging.error('Error downloading file, most likely without internet connection')
+                    logging.error(
+                        'Error downloading file, most likely without internet connection')
 
     def load_next(self, *args):
         for arg in args:
@@ -123,6 +138,8 @@ class MainUI(FloatLayout):
             else:
                 # Downgrades score when not clicking anything
                 self.downgrade_score()
+                #This method does not actually destroy the instance unless the lives are under 0
+                self.destroy_instance() 
 
         self.ids.winlose_label.text = ''
         if self.previous_buttons:
@@ -134,14 +151,13 @@ class MainUI(FloatLayout):
         self.selected = self.next_selected
         self.next_selected, self.next_winner = self.choose_hero(
             random.choice(all_heroes))
-        tr = Thread(target=self.download_next_sound, name='Download_Thread')
-        tr.start()
+        self.tr = Thread(target=self.download_next_sound, name='Download_Thread')
+        self.tr.start()
         self.create_buttons()
 
         self.play_winner_sound()
         self.time = self.seconds
         self.ids.question_image.source = 'data/images/question_mark.png'
-        # print(self.next_winner)
 
     def show_popup(self, title, text):
         popup = Popup(
@@ -149,12 +165,18 @@ class MainUI(FloatLayout):
         popup.open()
 
     def update_score(self):
-        if self.lives < 0:
-            pass
-            #TODO: this gets called 2 times -----
+            # TODO: this gets called 2 times -----
             #self.show_popup('Game Over','Oh no!')
-            #self.menu.remove_instance()
+            # self.menu.remove_instance()
         self.ids.label_score.text = str(self.score)
+        #self.ids.label_lives.text = str(self.lives+1)
+    
+    def destroy_instance(self):
+        if self.lives < 0:
+            self.show_popup('GG', 'GAME OVER')
+            self.stop_time()
+            self.tr.join()
+            self.menu.remove_instance()
 
     def button_click(self, name):
         # Right:
@@ -184,6 +206,7 @@ class MainUI(FloatLayout):
             self.downgrade_score()
             self.wins = 0
             self.update_score()
+            self.destroy_instance()
 
     def upgrade_score(self):
         self.score = self.score + (base_points * self.time)
@@ -191,7 +214,7 @@ class MainUI(FloatLayout):
 
     def downgrade_score(self):
         self.score = self.score - (base_lose_points * (10 - self.time))
-        self.lives = self.lives-1
+        self.lives = self.lives - 1
         if self.score < 0:
             self.score = 0
         self.update_score()
@@ -202,12 +225,13 @@ class MainUI(FloatLayout):
                 try:
                     #link = random.choice(hero_voice['voices'])
                     #name = link.rsplit('/', 1)[1]
-                    sound_path = os.path.join(
-                        'data/sounds/voices/', deletables[len(deletables) - 2])
-                    sound = SoundLoader.load(sound_path)
-                    print(sound_path)
+                    name = deletables[len(deletables) - 2]
+                    if name:
+                        sound_path = os.path.join(
+                            'data/sounds/voices/', name )
+                        sound = SoundLoader.load(sound_path)
                 except Exception as e:
-                    self.show_popup('Error',e.message)
+                    self.show_popup('Error', e.message)
                     logging.error(e.message)
                     link = random.choice(hero_voice['voices'])
                     sound = SoundLoader.load(link)
@@ -247,7 +271,7 @@ class GuessTheHeroApp(App):
         if self.menu.main:
             self.menu.main.stop_time()
         return True
-    
+
     def on_resume(self):
         if self.menu.main:
             self.menu.main.start()

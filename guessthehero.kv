@@ -11,21 +11,34 @@
             source: 'data/images/dota-2-logo.jpg' if Window.height < Window.width or Window.rotation > 0 else 'data/images/dota-2-logo-portrait.jpeg'
             size: self.size
     BoxLayout:
-        padding: 30
+        padding: [15,0,15,15]
         orientation: 'vertical' if Window.height > Window.width or platform is 'android' and  Window.rotation == 0 else 'horizontal'
         BoxLayout:
             orientation: 'vertical'
-            spacing: 5
-            padding: 30
+            spacing: 10
+            #padding: 15
+            #canvas:
+            #    Color:
+            #        rgb: 1,1,1
+            #    Rectangle:
+            #        source: 'data/images/button_on.png'
+            #        size: self.size
+            #        pos: self.pos
+            BoxLayout:
+                id: box_lives
+                orientation: 'horizontal'
+                spacing: 5
             Image:
                 id: question_image
                 source: 'data/images/question_mark.png'
+                size_hint: 1,1.2
             Label:
                 id: winlose_label
                 font_size: 40
             ProgressBar:
                 id: pbar
                 max: 10
+                size_hint: 1,0.2
             BoxLayout:
                 orientation: 'horizontal'
                 Label:
@@ -48,6 +61,7 @@
 <MenuUI>
     BoxLayout:
         Button:
+            #TODO: create an actual menu for the game.
             id: sg_button
             text: 'Start Game'
             background_normal: 'data/images/button_off.png'
