@@ -15,7 +15,15 @@ import random
 import time
 import os
 import logging
-logging.basicConfig(filename='data/errors.log', level=logging.DEBUG)
+#logging.basicConfig(
+#        filename='data/errors.log',
+#        filemode='a',
+#        format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+#        level=logging.DEBUG)
+logger = logging.getLogger('spam_application')
+fh = logging.FileHandler('data/guessthehero.log')
+fh.setLevel(logging.DEBUG)
+logger.addHandler(fh)
 try:
     from urllib.request import urlretrieve
 except:
@@ -127,9 +135,8 @@ class MainUI(FloatLayout):
                     urlretrieve(
                         link, os.path.join('data/sounds/voices/', name))
                 except Exception as e:
-                    #self.show_popup('Error','Error downloading file, check your internet connection!')
-                    logging.error(
-                        'Error downloading file, most likely without internet connection')
+                    logger.error(
+                        '%s - Error downloading file, most likely without internet connection' % time.asctime())
 
     def load_next(self, *args):
         for arg in args:
@@ -232,7 +239,7 @@ class MainUI(FloatLayout):
                         sound = SoundLoader.load(sound_path)
                 except Exception as e:
                     self.show_popup('Error', e.message)
-                    logging.error(e.message)
+                    logger.error(e.message)
                     link = random.choice(hero_voice['voices'])
                     sound = SoundLoader.load(link)
 
@@ -240,7 +247,7 @@ class MainUI(FloatLayout):
                     try:
                         sound.play()
                     except Exception as e:
-                        logging.error(e.message)
+                        logger.error(e.message)
 
     def create_buttons(self):
         #---------- Change buttons ----------------
