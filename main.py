@@ -1,5 +1,6 @@
+__version__ = '0.8.0'
 import kivy
-from kivy import platform
+from kivy.utils import platform
 from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.button import Button
@@ -15,11 +16,6 @@ import random
 import time
 import os
 import logging
-#logging.basicConfig(
-#        filename='data/errors.log',
-#        filemode='a',
-#        format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
-#        level=logging.DEBUG)
 logger = logging.getLogger('spam_application')
 fh = logging.FileHandler('data/guessthehero.log')
 fh.setLevel(logging.DEBUG)
@@ -70,6 +66,37 @@ class MenuUI(FloatLayout):
 kill_phrases = ['Ownage!', 'Double Tap!',
                 'Killing Spree!', 'Ultra Kill', 'Rampage!']
 
+platform = platform()
+
+if platform == 'android':
+    import gs_android
+    achievementKillingSpree="CgkI--nlpJAYEAIQAg"
+    achievementDominating="CgkI--nlpJAYEAIQAw"
+    achievementMegaKill="CgkI--nlpJAYEAIQBA"
+    achievementUnstoppable="CgkI--nlpJAYEAIQBQ"
+    achievementWickedSick="CgkI--nlpJAYEAIQBg"
+    achievementMonsterKill="CgkI--nlpJAYEAIQBw"
+    achievementGodlike="CgkI--nlpJAYEAIQCA"
+    achievementBeyondGodlike="CgkI--nlpJAYEAIQCQ"
+    leaderboardScore="CgkI--nlpJAYEAIQAA"
+    achievements = {'Killing_Spree':achievementKillingSpree,
+                    'Dominating':achievementDominating,
+                    'Mega_Kill':achievementMegaKill,
+                    'Unstoppable':achievementUnstoppable,
+                    'Wicked_Sick':achievementWickedSick,
+                    'Monster_Kill':achievementMonsterKill,
+                    'Godlike':achievementGodlike,
+                    'Beyond_Godlike':achievementGodlike}
+
+class GooglePlayPopup(Popup):
+    def __init__(self, main_ui, **kwargs):
+        super(GooglePlayPopup, self).__init__(**kwargs)
+        self.main_ui = main_ui
+
+    def activate_google_play(self):
+        self.main_ui.activate_google_play()
+        
+
 
 class MainUI(FloatLayout):
 
@@ -87,13 +114,41 @@ class MainUI(FloatLayout):
             random.choice(all_heroes))
         self.download_next_sound()
         self.menu = menu
-        #self.ids.label_lives.text=str(self.lives+1)
+        # self.ids.label_lives.text=str(self.lives+1)
         self.show_lives()
+        self.use_google_play = 0#1
+
+        if platform == 'android':
+            #self.use_google_play = self.config.getint('play', 'use_google_play')
+            if self.use_google_play:
+                gs_android.setup(self)
+            else:
+                Clock.schedule_once(self.ask_google_play, .5)
+
+    def gs_show_leaderboard(self):
+        if platform == 'android':
+            if self.use_google_play:
+                gs_android.show_leaderboard(leaderboardScore)
+            else:
+                self.ask_google_play()
+
+    def ask_google_play(self, *args):
+        popup = GooglePlayPopup(self)
+        popup.open()
+
+    def activate_google_play(self):
+        self.use_google_play = 1
+        gs_android.setup(self)
+
+    def upload_score(self, score):
+        if platform == 'android' and self.use_google_play:
+            gs_android.leaderboard(leaderboardScore, score)
 
     def show_lives(self):
         self.ids.box_lives.clear_widgets()
         for i in range(self.lives):
-            life = Image(source='data/images/heart_of_tarrasque.png',size_hint=(0.8,0.8))
+            life = Image(
+                source='data/images/heart_of_tarrasque.png', size_hint=(0.8, 0.8))
             self.ids.box_lives.add_widget(life)
 
     def prepare_clock(self):
@@ -145,8 +200,9 @@ class MainUI(FloatLayout):
             else:
                 # Downgrades score when not clicking anything
                 self.downgrade_score()
-                #This method does not actually destroy the instance unless the lives are under 0
-                self.destroy_instance() 
+                # This method does not actually destroy the instance unless the
+                # lives are under 0
+                self.destroy_instance()
 
         self.ids.winlose_label.text = ''
         if self.previous_buttons:
@@ -158,7 +214,8 @@ class MainUI(FloatLayout):
         self.selected = self.next_selected
         self.next_selected, self.next_winner = self.choose_hero(
             random.choice(all_heroes))
-        self.tr = Thread(target=self.download_next_sound, name='Download_Thread')
+        self.tr = Thread(
+            target=self.download_next_sound, name='Download_Thread')
         self.tr.start()
         self.create_buttons()
 
@@ -177,7 +234,7 @@ class MainUI(FloatLayout):
             # self.menu.remove_instance()
         self.ids.label_score.text = str(self.score)
         #self.ids.label_lives.text = str(self.lives+1)
-    
+
     def destroy_instance(self):
         if self.lives < 0:
             self.show_popup('GG', 'GAME OVER')
@@ -235,7 +292,7 @@ class MainUI(FloatLayout):
                     name = deletables[len(deletables) - 2]
                     if name:
                         sound_path = os.path.join(
-                            'data/sounds/voices/', name )
+                            'data/sounds/voices/', name)
                         sound = SoundLoader.load(sound_path)
                 except Exception as e:
                     self.show_popup('Error', e.message)

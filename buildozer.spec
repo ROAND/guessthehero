@@ -25,11 +25,11 @@ source.include_exts = py,png,jpg,kv,atlas,wav,mp3,log,jpeg
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-#version.regex = __version__ = '(.*)'
-#version.filename = %(source.dir)s/main.py
+version.regex = __version__ = '(.*)'
+version.filename = %(source.dir)s/main.py
 
 # (str) Application versioning (method 2)
-version = 0.5.0
+#version = 0.5.0
 
 # (list) Application requirements
 requirements = kivy, pil, ffmpeg, openssl
@@ -85,14 +85,15 @@ android.p4a_dir = /home/ronnie/Programs/python-for-android
 # their classes. Don't add jars that you do not need, since extra jars can slow
 # down the build process. Allows wildcards matching, for example:
 # OUYA-ODK/libs/*.jar
-#android.add_jars = foo.jar,bar.jar,path/to/more/*.jar
+android.add_jars = libs/*.jar
 
 # (list) List of Java files to add to the android project (can be java or a
 # directory containing the files)
-#android.add_src =
+android.add_src = libs/basegameutils/java
 
 # (str) python-for-android branch to use, if not master, useful to try
 # not yet merged features.
+android.branch = on-activity-result
 #android.branch = master
 
 # (str) OUYA Console category. Should be one of GAME or APP
@@ -113,11 +114,13 @@ android.p4a_dir = /home/ronnie/Programs/python-for-android
 #android.wakelock = False
 
 # (list) Android application meta-data to set (key=value format)
-#android.meta_data =
+android.meta_data = com.google.android.gms.appstate.APP_ID = @string/app_id, com.google.android.gms.games.APP_ID = @string/app_id
+#(com.google.android.gms.games.APP_ID = @string/app_id,
+
 
 # (list) Android library project to add (will be added in the
 # project.properties automatically.)
-#android.library_references =
+#android.library_references = libs/google-play-services_lib
 
 #
 # iOS specific
@@ -174,3 +177,8 @@ log_level = 2
 # Then, invoke the command line with the "demo" profile:
 #
 #     buildozer --profile demo android debug
+
+#[app:android.meta_data]
+#com.google.android.gms.version = @integer/google_play_services_version
+#com.google.android.gms.games.APP_ID = @string/app_id
+#com.google.android.gms.appstate.APP_ID = @string/app_id
