@@ -229,11 +229,7 @@ class MainUI(FloatLayout):
         popup.open()
 
     def update_score(self):
-            # TODO: this gets called 2 times -----
-            #self.show_popup('Game Over','Oh no!')
-            # self.menu.remove_instance()
         self.ids.label_score.text = str(self.score)
-        #self.ids.label_lives.text = str(self.lives+1)
 
     def destroy_instance(self):
         if self.lives < 0:
@@ -279,6 +275,8 @@ class MainUI(FloatLayout):
     def downgrade_score(self):
         self.score = self.score - (base_lose_points * (10 - self.time))
         self.lives = self.lives - 1
+        self.show_lives()
+        #self.ids.box_lives.clear_widgets()
         if self.score < 0:
             self.score = 0
         self.update_score()
