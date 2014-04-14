@@ -67,6 +67,7 @@
         Button:
             #TODO: create an actual menu for the game.
             id: sg_button
+            #size_hint: 0.5,0.5
             text: 'Start Game'
             background_normal: 'data/images/button_off.png'
             background_down: 'data/images/button_on.png'
@@ -104,4 +105,4 @@
 
             Button:
                 text: 'Yes'
-                on_press: root.activate_google_play(); root.dismiss()
+                on_press: app.activate_google_play(); root.dismiss()

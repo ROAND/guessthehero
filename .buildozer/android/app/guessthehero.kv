@@ -25,6 +25,9 @@
             #        source: 'data/images/button_on.png'
             #        size: self.size
             #        pos: self.pos
+            Label:
+                text: 'Lives:'
+                font_size: 20
             BoxLayout:
                 id: box_lives
                 orientation: 'horizontal'
@@ -101,4 +104,4 @@
 
             Button:
                 text: 'Yes'
-                on_press: root.activate_google_play(); root.dismiss()
+                on_press: app.activate_google_play(); root.dismiss()

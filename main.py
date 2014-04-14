@@ -49,7 +49,17 @@ base_lose_points = 40
 class MenuUI(FloatLayout):
 
     def __init__(self, **kwargs):
+        self.ask()
         super(MenuUI, self).__init__(**kwargs)
+        
+    def ask(self):
+        #app.ask_google_play()
+        if platform == 'android':
+            app.use_google_play = app.config.getint('play', 'use_google_play')
+            if app.use_google_play:
+                app.activate_google_play()
+            else:
+                Clock.schedule_once(app.ask_google_play, .5)
 
     def start_game(self):
         self.ids.sg_button.opacity = 0
@@ -89,14 +99,11 @@ if platform == 'android':
                     'Beyond_Godlike':achievementGodlike}
 
 class GooglePlayPopup(Popup):
-    def __init__(self, main_ui, **kwargs):
+    def __init__(self, **kwargs):
         super(GooglePlayPopup, self).__init__(**kwargs)
-        self.main_ui = main_ui
 
-    def activate_google_play(self):
-        self.main_ui.activate_google_play()
-        
-
+    #def activate_google_play(self):
+    #    self.main_ui.activate_google_play()
 
 class MainUI(FloatLayout):
 
@@ -116,34 +123,9 @@ class MainUI(FloatLayout):
         self.menu = menu
         # self.ids.label_lives.text=str(self.lives+1)
         self.show_lives()
-        self.use_google_play = 0#1
+        app.use_google_play = 0#1
 
-        if platform == 'android':
-            #self.use_google_play = self.config.getint('play', 'use_google_play')
-            if self.use_google_play:
-                gs_android.setup(self)
-            else:
-                Clock.schedule_once(self.ask_google_play, .5)
-
-    def gs_show_leaderboard(self):
-        if platform == 'android':
-            if self.use_google_play:
-                gs_android.show_leaderboard(leaderboardScore)
-            else:
-                self.ask_google_play()
-
-    def ask_google_play(self, *args):
-        popup = GooglePlayPopup(self)
-        popup.open()
-
-    def activate_google_play(self):
-        self.use_google_play = 1
-        gs_android.setup(self)
-
-    def upload_score(self, score):
-        if platform == 'android' and self.use_google_play:
-            gs_android.leaderboard(leaderboardScore, score)
-
+    
     def show_lives(self):
         self.ids.box_lives.clear_widgets()
         for i in range(self.lives):
@@ -324,10 +306,40 @@ class MainUI(FloatLayout):
 
 class GuessTheHeroApp(App):
 
+    use_kivy_settings = False
+
+    def build_config(self, config):
+        if platform == 'android':
+            config.setdefaults('play', {'use_google_play': '0'})
+
     def build(self):
+        global app
+        app = self
         self.icon = 'data/images/dota_icon.png'
         self.menu = MenuUI()
+        
         return self.menu
+
+    def gs_upload_score(self, score):
+        if platform == 'android' and self.use_google_play:
+            gs_android.leaderboard(leaderboardScore, score)
+
+    def activate_google_play(self):
+        self.config.set('play', 'use_google_play', '1')
+        self.config.write()
+        self.use_google_play = 1
+        gs_android.setup(self)
+
+    def gs_show_leaderboard(self):
+        if platform == 'android':
+            if self.use_google_play:
+                gs_android.show_leaderboard(leaderboardScore)
+            else:
+                self.ask_google_play()
+
+    def ask_google_play(self, *args):
+        popup = GooglePlayPopup()
+        popup.open()
 
     def on_pause(self):
         if self.menu.main:

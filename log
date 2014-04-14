@@ -1,0 +1,89 @@
+I/dalvikvm(20225): Could not find method android.view.View.getDisplay, referenced from method com.google.android.gms.internal.gd$b.g
+W/dalvikvm(20225): VFY: unable to resolve virtual method 5101: Landroid/view/View;.getDisplay ()Landroid/view/Display;
+D/dalvikvm(20225): VFY: replacing opcode 0x6e at 0x0009
+I/dalvikvm(20225): Could not find method android.view.ViewTreeObserver.removeOnGlobalLayoutListener, referenced from method com.google.android.gms.internal.gd$b.f
+W/dalvikvm(20225): VFY: unable to resolve virtual method 5270: Landroid/view/ViewTreeObserver;.removeOnGlobalLayoutListener (Landroid/view/ViewTreeObserver$OnGlobalLayoutListener;)V
+D/dalvikvm(20225): VFY: replacing opcode 0x6e at 0x0037
+W/PopupManager(20225): You have not specified a View to use as content view for popups. Falling back to the Activity content view which may not work properly in future versions of the API. Use setViewForPopups() to set your content view.
+W/dalvikvm(20225): VFY: unable to resolve static field 1497 (common_google_play_services_install_title) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x004b
+W/dalvikvm(20225): VFY: unable to resolve static field 1493 (common_google_play_services_enable_title) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x0056
+W/dalvikvm(20225): VFY: unable to resolve static field 1508 (common_google_play_services_update_title) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x0061
+W/dalvikvm(20225): VFY: unable to resolve static field 1505 (common_google_play_services_unsupported_title) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x0073
+W/dalvikvm(20225): VFY: unable to resolve static field 1501 (common_google_play_services_network_error_title) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x0085
+W/dalvikvm(20225): VFY: unable to resolve static field 1499 (common_google_play_services_invalid_account_title) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x00af
+W/dalvikvm(20225): VFY: unable to resolve static field 1505 (common_google_play_services_unsupported_title) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x00ce
+W/dalvikvm(20225): VFY: unable to resolve static field 1494 (common_google_play_services_install_button) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x000f
+W/dalvikvm(20225): VFY: unable to resolve static field 1491 (common_google_play_services_enable_button) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x0016
+W/dalvikvm(20225): VFY: unable to resolve static field 1506 (common_google_play_services_update_button) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x001d
+W/dalvikvm(20225): VFY: unable to resolve static field 1502 (common_google_play_services_unknown_issue) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x0007
+W/dalvikvm(20225): VFY: unable to resolve static field 1496 (common_google_play_services_install_text_tablet) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x0018
+W/dalvikvm(20225): VFY: unable to resolve static field 1495 (common_google_play_services_install_text_phone) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x0038
+W/dalvikvm(20225): VFY: unable to resolve static field 1492 (common_google_play_services_enable_text) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x003f
+W/dalvikvm(20225): VFY: unable to resolve static field 1507 (common_google_play_services_update_text) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x0046
+W/dalvikvm(20225): VFY: unable to resolve static field 1504 (common_google_play_services_unsupported_text) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x0066
+W/dalvikvm(20225): VFY: unable to resolve static field 1500 (common_google_play_services_network_error_text) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x006d
+W/dalvikvm(20225): VFY: unable to resolve static field 1498 (common_google_play_services_invalid_account_text) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x0074
+W/dalvikvm(20225): VFY: unable to resolve static field 1503 (common_google_play_services_unsupported_date_text) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x007b
+W/dalvikvm(20225): VFY: unable to resolve static field 1502 (common_google_play_services_unknown_issue) in Lcom/google/android/gms/R$string;
+D/dalvikvm(20225): VFY: replacing opcode 0x60 at 0x000c
+E/GooglePlayServicesUtil(20225): The Google Play services resources were not found. Check your project configuration to ensure that the resources are included.
+W/System.err(20225): java.lang.IllegalStateException: The meta-data tag in your app's AndroidManifest.xml does not have the right value.  Expected 4323000 but found 0.  You must have the following declaration within the <application> element:     <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+W/System.err(20225):    at com.google.android.gms.common.GooglePlayServicesUtil.t(Unknown Source)
+W/System.err(20225):    at com.google.android.gms.common.GooglePlayServicesUtil.isGooglePlayServicesAvailable(Unknown Source)
+W/System.err(20225):    at com.google.android.gms.internal.eh.connect(Unknown Source)
+W/System.err(20225):    at com.google.android.gms.common.api.b.connect(Unknown Source)
+W/System.err(20225):    at com.google.example.games.basegameutils.GameHelper.onStart(GameHelper.java:344)
+W/System.err(20225):    at org.jnius.NativeInvocationHandler.invoke0(Native Method)
+W/System.err(20225):    at org.jnius.NativeInvocationHandler.invoke(NativeInvocationHandler.java:26)
+W/System.err(20225):    at $Proxy0.run(Native Method)
+W/System.err(20225):    at android.os.Handler.handleCallback(Handler.java:605)
+W/System.err(20225):    at android.os.Handler.dispatchMessage(Handler.java:92)
+W/System.err(20225):    at android.os.Looper.loop(Looper.java:137)
+W/System.err(20225):    at android.app.ActivityThread.main(ActivityThread.java:4441)
+W/System.err(20225):    at java.lang.reflect.Method.invokeNative(Native Method)
+W/System.err(20225):    at java.lang.reflect.Method.invoke(Method.java:511)
+W/System.err(20225):    at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:784)
+W/System.err(20225):    at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:551)
+W/System.err(20225):    at dalvik.system.NativeStart.main(Native Method)
+I/python  (20225):  Traceback (most recent call last):
+I/python  (20225):    File "/home/ronnie/workspace/gth/.buildozer/android/platform/python-for-android/build/python-install/lib/python
+I/python  (20225):    File "/home/ronnie/workspace/gth/.buildozer/android/app/gs_android.py", line 39, in setup
+I/python  (20225):    File "jnius_export_class.pxi", line 562, in jnius.jnius.JavaMethod.__call__ (jnius/jnius.c:17875)
+I/python  (20225):    File "jnius_export_class.pxi", line 656, in jnius.jnius.JavaMethod.call_method (jnius/jnius.c:18960)
+I/python  (20225):    File "jnius_utils.pxi", line 43, in jnius.jnius.check_exception (jnius/jnius.c:3239)
+I/python  (20225):  JavaException: JVM exception occured
+I/python  (20225): ['Raz_spawn_05.mp3', 'Temp_pain_09.mp3', 'Troll_fervor_04.mp3', 'Spec_pain_05.mp3']
+E/CMarlinMediator(  133): Error : MarlinMediator Failed to get TrustedTime
+D/AudioHardwareMSM7X30(  148): value of device and enable is 32 1
+D/kernel  (  140): [214366.378448] [msm7x30.c:msm_device_put] device xloud_speaker_mono_rx set 1
+D/kernel  (  140): [214366.378479] [msm7x30.c:msm_device_put] device freq =48000
+D/kernel  (  140): [214366.382720] [adsp.c:msm_adsp_get] module AFETASK has been registered
+D/kernel  (  140): [214366.382720] [adsp.c:msm_adsp_enable] enable 'AFETASK'state[0] id[17227119]
+D/kernel  (  140): [214366.388244] [adsp.c:adsp_rtos_mtoa_cb] rpc event=0, proc_id=2, module=17227119, image=0
+D/kernel  (  140): [214366.388275] [adsp.c:adsp_rtos_mtoa_cb] module AFETASK: READY
+D/kernel  (  140): [214366.456237] msm_snddev_poweramp_on: power on amplifier
+D/kernel  (  140): [214366.456298] [adsp.c:msm_adsp_get] module AUDPPTASK has been registered
+D/kernel  (  140): [214366.456329] [adsp.c:msm_adsp_enable] enable 'AUDPPTASK'state[0] id[17227122]
+D/kernel  (  140): [214366.457550] [adsp.c:adsp_rtos_mtoa_cb] rpc event=0, proc_id=2, module=17227122, image=0
+D/kernel  (  140): [214366.457550] [adsp.c:adsp_rtos_mtoa_cb] module AUDPPTASK: READY
+D/kernel  (  140): [214366.461608] [audpp.c:audpp_dsp_event] ENABLE
+D/kernel  (  140): [214366.467742] [adsp.c:msm_adsp_write] AUDPPTASK command took 67 attempts: rc 0
